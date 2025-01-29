@@ -38,10 +38,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # - name: "Install packages"
-      #   run: |
-      #     sudo apt-get -y update
-      #     sudo apt-get -y install libboost-all-dev cmake libeigen3-dev libyaml-cpp-dev
       - name: "Download build-zip"
         uses: actions/download-artifact@v4
         with:
