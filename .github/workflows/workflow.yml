@@ -1,0 +1,57 @@
+name: Exercise Workflow
+
+on: [push]
+
+jobs:
+  style_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jidicula/clang-format-action@v4.14.0
+        with:
+          check-path: ./src
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Install packages"
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install libboost-all-dev cmake libeigen3-dev libyaml-cpp-dev
+      - name: "Build the source"
+        run: |
+          mkdir github-build 
+          cd github-build
+          cmake .. 
+          make
+      - name: "Archive the build filder"
+        run : tar -cvf github-build.tar ./github-build
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-zip
+          path: github-build.tar
+          retention-days: 1
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # - name: "Install packages"
+      #   run: |
+      #     sudo apt-get -y update
+      #     sudo apt-get -y install libboost-all-dev cmake libeigen3-dev libyaml-cpp-dev
+      - name: "Download build-zip"
+        uses: actions/download-artifact@v4
+        with:
+          name: build-zip
+      - name: "Unzip build folder"
+        run: |
+          tar -xvf github-build.tar
+      -name: "Run the tests"
+        run: |
+          cd github-build
+          ctest
+
+          
