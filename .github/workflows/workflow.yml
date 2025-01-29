@@ -45,9 +45,7 @@ jobs:
       - name: "Unzip build folder"
         run: |
           tar -xvf github-build.tar
-      -name: "Run the tests"
+      - name: "Run the tests"
         run: |
           cd github-build
           ctest
-
-          
